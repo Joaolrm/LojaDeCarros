@@ -5,7 +5,7 @@ namespace LojaDeCarros.Models
     public class Seller
     {
         public int Id { get; set; }
-        [Display(Name = "Nome")]
+        [Display(Name = "Nome do vendedor")]
 
         public string Name { get; set; }
         [Display(Name = "Data de Contratação")]

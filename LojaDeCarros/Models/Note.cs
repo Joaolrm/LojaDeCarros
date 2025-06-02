@@ -24,6 +24,8 @@ namespace LojaDeCarros.Models
         public Seller? Salesperson { get; set; }
 
         public int CarId { get; set; }
+        [Display(Name = "Carro")]
+
         public Car? Car { get; set; }
         [NotMapped]
         [Display(Name = "Comissão")]

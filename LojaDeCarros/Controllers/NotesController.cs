@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LojaDeCarros.Data;
 using LojaDeCarros.Models;
+using LojaDeCarros.Validators;
 
 namespace LojaDeCarros.Controllers
 {
@@ -50,7 +51,7 @@ namespace LojaDeCarros.Controllers
         // GET: Notes/Create
         public IActionResult Create()
         {
-            ViewData["BuyerId"] = new SelectList(_context.Customer, "Id", "Id");
+            ViewData["Buyer"] = new SelectList(_context.Customer, "Id", "CPF");
 
             var carros = _context.Car
                 .Select(c => new
@@ -74,6 +75,15 @@ namespace LojaDeCarros.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Number,IssueDate,Warranty,SaleValue,BuyerId,SellerId,CarId")] Note note)
         {
+
+            if (!NoteValidator.IsValid(note, out var errors))
+            {
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError("IssueDate", error);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(note);
@@ -81,7 +91,7 @@ namespace LojaDeCarros.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewData["BuyerId"] = new SelectList(_context.Customer, "Id", "Id", note.BuyerId);
+            ViewData["Buyer"] = new SelectList(_context.Customer, "Id", "CPF", note.BuyerId);
 
             var carros = _context.Car
                 .Select(c => new
@@ -109,9 +119,18 @@ namespace LojaDeCarros.Controllers
             {
                 return NotFound();
             }
-            ViewData["BuyerId"] = new SelectList(_context.Customer, "Id", "Id", note.BuyerId);
-            ViewData["CarId"] = new SelectList(_context.Car, "Id", "Id", note.CarId);
-            ViewData["SellerId"] = new SelectList(_context.Set<Seller>(), "Id", "Id", note.SellerId);
+
+            ViewData["Buyer"] = new SelectList(_context.Customer, "Id", "CPF", note.BuyerId);
+
+            var carros = _context.Car
+                .Select(c => new
+                {
+                    c.Id,
+                    Descricao = $"{c.Model} - {c.ManufactureYear}/{c.ModelYear} - {c.Brand} - {c.ChassisNumber}"
+                }).ToList();
+            ViewData["Car"] = new SelectList(carros, "Id", "Descricao", note.CarId);
+
+            ViewData["Seller"] = new SelectList(_context.Set<Seller>(), "Id", "Name", note.SellerId);
             return View(note);
         }
 
@@ -125,6 +144,14 @@ namespace LojaDeCarros.Controllers
             if (id != note.Id)
             {
                 return NotFound();
+            }
+
+            if (!NoteValidator.IsValid(note, out var errors))
+            {
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError("IssueDate", error);
+                }
             }
 
             if (ModelState.IsValid)
@@ -147,9 +174,19 @@ namespace LojaDeCarros.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BuyerId"] = new SelectList(_context.Customer, "Id", "Id", note.BuyerId);
-            ViewData["CarId"] = new SelectList(_context.Car, "Id", "Id", note.CarId);
-            ViewData["SellerId"] = new SelectList(_context.Set<Seller>(), "Id", "Id", note.SellerId);
+
+            ViewData["Buyer"] = new SelectList(_context.Customer, "Id", "CPF", note.BuyerId);
+
+            var carros = _context.Car
+                .Select(c => new
+                {
+                    c.Id,
+                    Descricao = $"{c.Model} - {c.ManufactureYear}/{c.ModelYear} - {c.Brand} - {c.ChassisNumber}"
+                }).ToList();
+            ViewData["Car"] = new SelectList(carros, "Id", "Descricao", note.CarId);
+
+            ViewData["Seller"] = new SelectList(_context.Set<Seller>(), "Id", "Name", note.SellerId);
+
             return View(note);
         }
 
