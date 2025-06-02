@@ -1,0 +1,80 @@
+﻿@model IEnumerable<LojaDeCarros.Models.Note>
+
+@{
+	ViewData["Title"] = "Index";
+}
+
+<h1>Notas</h1>
+
+<p>
+	<a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.Number)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.IssueDate)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Warranty)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.SaleValue)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Salesperson)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Commission)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Car!.ChassisNumber)
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => item.Number)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.IssueDate)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Warranty)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.SaleValue)
+				</td>
+
+				<td>
+					<a asp-controller="Sellers" asp-action="Details" asp-route-id="@item.Salesperson!.Id">
+						@item.Salesperson!.Name
+					</a>
+
+				</td>
+				<td>
+					@item.Commission.ToString("C2")
+				</td>
+
+				<td>
+
+					<a asp-controller="Cars" asp-action="Details" asp-route-id="@item.Car!.Id">
+						@item.Car!.ChassisNumber
+					</a>
+
+				</td>
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+					<a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+					<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
