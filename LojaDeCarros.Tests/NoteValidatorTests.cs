@@ -2,7 +2,7 @@
 using LojaDeCarros.Validators;
 using Xunit;
 
-namespace LojaDeCarros.Tests.Validators
+namespace LojaDeCarros.Tests
 {
     public class NoteValidatorTests
     {
